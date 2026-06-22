@@ -1,5 +1,6 @@
 import { AppBar, Toolbar, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
+import SyncPanel from './SyncPanel';
 
 function NavBar() {
   return (
@@ -13,6 +14,7 @@ function NavBar() {
         >
           BSR
         </Typography>
+        <SyncPanel />
       </Toolbar>
     </AppBar>
   );

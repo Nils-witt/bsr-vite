@@ -23,8 +23,11 @@ const vehicleSlice = createSlice({
       const index = state.vehicles.findIndex((v) => v.id === action.payload.id);
       if (index !== -1) state.vehicles[index] = action.payload;
     },
+    setAllVehicles(state, action: PayloadAction<Vehicle[]>) {
+      state.vehicles = action.payload;
+    },
   },
 });
 
-export const { addVehicle, removeVehicle, updateVehicle } = vehicleSlice.actions;
+export const { addVehicle, removeVehicle, updateVehicle, setAllVehicles } = vehicleSlice.actions;
 export default vehicleSlice.reducer;
