@@ -17,7 +17,7 @@ import WifiOffIcon from '@mui/icons-material/WifiOff';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 import { QRCodeSVG } from 'qrcode.react';
-import { useWebRTCSync } from '../hooks/useWebRTCSync';
+import { useWebRTCSync } from '../context/WebRTCSyncContext';
 import { WebRTCSync } from '../services/webrtcSync';
 import QrScanner from './QrScanner';
 
