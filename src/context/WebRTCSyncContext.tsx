@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { webrtcSync, WebRTCSync } from '../services/webrtcSync';
+import { WebRTCSync } from '../services/webrtcSync';
 
 type Status = 'idle' | 'connecting' | 'hosting' | 'connected' | 'error';
 
@@ -23,7 +23,7 @@ export function WebRTCSyncProvider({ children }: { children: React.ReactNode }) 
     setStatus('connecting');
     setError(null);
     try {
-      const id = await webrtcSync.startHost();
+      const id = await WebRTCSync.getInstance().startHost();
       setPeerId(id);
       setStatus('hosting');
     } catch (e) {
@@ -36,7 +36,7 @@ export function WebRTCSyncProvider({ children }: { children: React.ReactNode }) 
     setStatus('connecting');
     setError(null);
     try {
-      await webrtcSync.connectToHost(hostId);
+      await WebRTCSync.getInstance().connectToHost(hostId);
       setStatus('connected');
     } catch (e) {
       setError(String(e));
@@ -45,7 +45,7 @@ export function WebRTCSyncProvider({ children }: { children: React.ReactNode }) 
   }, []);
 
   const disconnect = useCallback(() => {
-    webrtcSync.destroy();
+    WebRTCSync.getInstance().destroy();
     setStatus('idle');
     setPeerId(null);
     setError(null);

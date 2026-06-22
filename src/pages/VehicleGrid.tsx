@@ -100,26 +100,28 @@ function VehicleCard({ vehicle, onEdit }: { vehicle: Vehicle; onEdit: (v: Vehicl
           {vehicle.personnel.fuehrer} / {vehicle.personnel.unterfuehrer} /{' '}
           {vehicle.personnel.helfer} // {vehicle.personnel.sum}
         </Typography>
-        {vehicle.preregisteredAt && (
-          <Typography variant="caption" display="block" color="text.secondary">
-            Preregistered: {new Date(vehicle.preregisteredAt).toLocaleTimeString()}
-          </Typography>
-        )}
-        {vehicle.arrivedAt && (
-          <Typography variant="caption" display="block" color="text.secondary">
-            Arrived: {new Date(vehicle.arrivedAt).toLocaleTimeString()}
-          </Typography>
-        )}
-        {vehicle.assignedAt && (
-          <Typography variant="caption" display="block" color="text.secondary">
-            Assigned: {new Date(vehicle.assignedAt).toLocaleTimeString()}
-          </Typography>
-        )}
-        {vehicle.dispatchedAt && (
-          <Typography variant="caption" display="block" color="text.secondary">
-            Dispatched: {new Date(vehicle.dispatchedAt).toLocaleTimeString()}
-          </Typography>
-        )}
+        <Stack direction={'column'}>
+          {vehicle.preregisteredAt && (
+            <Typography variant="caption" color="text.secondary">
+              Preregistered: {new Date(vehicle.preregisteredAt).toLocaleTimeString()}
+            </Typography>
+          )}
+          {vehicle.arrivedAt && (
+            <Typography variant="caption" color="text.secondary">
+              Arrived: {new Date(vehicle.arrivedAt).toLocaleTimeString()}
+            </Typography>
+          )}
+          {vehicle.assignedAt && (
+            <Typography variant="caption" color="text.secondary">
+              Assigned: {new Date(vehicle.assignedAt).toLocaleTimeString()}
+            </Typography>
+          )}
+          {vehicle.dispatchedAt && (
+            <Typography variant="caption" color="text.secondary">
+              Dispatched: {new Date(vehicle.dispatchedAt).toLocaleTimeString()}
+            </Typography>
+          )}
+        </Stack>
       </CardContent>
       <CardActions>
         <Button size="small" onClick={() => onEdit(vehicle)}>
