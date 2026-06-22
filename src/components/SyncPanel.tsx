@@ -18,12 +18,13 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 import { QRCodeSVG } from 'qrcode.react';
 import { useWebRTCSync } from '../hooks/useWebRTCSync';
+import { WebRTCSync } from '../services/webrtcSync';
 import QrScanner from './QrScanner';
 
 function SyncPanel() {
   const { status, peerId, error, startHost, connectToHost, disconnect } = useWebRTCSync();
   const [open, setOpen] = useState(false);
-  const [hostId, setHostId] = useState('');
+  const [hostId, setHostId] = useState(() => WebRTCSync.getLastHostId() ?? '');
   const [scanning, setScanning] = useState(false);
 
   const isActive = status === 'hosting' || status === 'connected';

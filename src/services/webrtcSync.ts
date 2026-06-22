@@ -22,11 +22,21 @@ class WebRTCSync {
     return this.connections.length;
   }
 
+  private static readonly STORAGE_KEY = 'bsr_host_peer_id';
+  private static readonly LAST_HOST_KEY = 'bsr_last_host_id';
+
+  static getLastHostId(): string | null {
+    return localStorage.getItem(WebRTCSync.LAST_HOST_KEY);
+  }
+
   startHost(): Promise<string> {
+    const savedId = localStorage.getItem(WebRTCSync.STORAGE_KEY) ?? undefined;
+
     return new Promise((resolve, reject) => {
-      this.peer = new Peer();
+      this.peer = savedId ? new Peer(savedId) : new Peer();
 
       this.peer.on('open', (id) => {
+        localStorage.setItem(WebRTCSync.STORAGE_KEY, id);
         this.isHost = true;
         this.peer!.on('connection', (conn) => this.handleIncoming(conn));
         this.unsubscribe = store.subscribe(() => {
@@ -47,6 +57,7 @@ class WebRTCSync {
         const conn = this.peer!.connect(hostId);
 
         conn.on('open', () => {
+          localStorage.setItem(WebRTCSync.LAST_HOST_KEY, hostId);
           this.connections.push(conn);
           conn.on('data', (data) => this.handleData(data as SyncMessage));
           // Subscribe and send local changes up to the host
@@ -114,4 +125,5 @@ class WebRTCSync {
   }
 }
 
+export { WebRTCSync };
 export const webrtcSync = new WebRTCSync();
