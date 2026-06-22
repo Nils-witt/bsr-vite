@@ -42,9 +42,19 @@ function SyncPanel() {
         </IconButton>
       </Tooltip>
 
-      <Dialog open={open} onClose={() => { setOpen(false); setScanning(false); }} fullWidth maxWidth="xs">
+      <Dialog
+        open={open}
+        onClose={() => {
+          setOpen(false);
+          setScanning(false);
+        }}
+        fullWidth
+        maxWidth="xs"
+      >
         <DialogTitle>Real-time Sync</DialogTitle>
-        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '16px !important' }}>
+        <DialogContent
+          sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '16px !important' }}
+        >
           {status === 'idle' && !scanning && (
             <>
               <Button variant="contained" onClick={startHost}>
@@ -86,9 +96,7 @@ function SyncPanel() {
             </>
           )}
 
-          {status === 'connecting' && (
-            <Typography color="text.secondary">Connecting…</Typography>
-          )}
+          {status === 'connecting' && <Typography color="text.secondary">Connecting…</Typography>}
 
           {status === 'hosting' && peerId && (
             <>
@@ -117,17 +125,28 @@ function SyncPanel() {
             <Chip label="Connected" color="success" sx={{ alignSelf: 'flex-start' }} />
           )}
 
-          {status === 'error' && (
-            <Typography color="error">{error ?? 'Unknown error'}</Typography>
-          )}
+          {status === 'error' && <Typography color="error">{error ?? 'Unknown error'}</Typography>}
         </DialogContent>
         <DialogActions>
           {isActive && (
-            <Button color="error" onClick={() => { disconnect(); setOpen(false); }}>
+            <Button
+              color="error"
+              onClick={() => {
+                disconnect();
+                setOpen(false);
+              }}
+            >
               Disconnect
             </Button>
           )}
-          <Button onClick={() => { setOpen(false); setScanning(false); }}>Close</Button>
+          <Button
+            onClick={() => {
+              setOpen(false);
+              setScanning(false);
+            }}
+          >
+            Close
+          </Button>
         </DialogActions>
       </Dialog>
     </>

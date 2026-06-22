@@ -94,9 +94,7 @@ class WebRTCSync {
       conn.on('data', (data) => {
         const msg = data as SyncMessage;
         this.applyRemote(msg.vehicles);
-        this.connections
-          .filter((c) => c !== conn)
-          .forEach((c) => this.sendTo(c, msg.vehicles));
+        this.connections.filter((c) => c !== conn).forEach((c) => this.sendTo(c, msg.vehicles));
       });
     });
   }

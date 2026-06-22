@@ -129,7 +129,13 @@ function VehicleCard({ vehicle, onEdit }: { vehicle: Vehicle; onEdit: (v: Vehicl
           <Button
             size="small"
             onClick={() =>
-              dispatch(updateVehicle({ ...vehicle, state: 'arrived', arrivedAt: new Date().toISOString() }))
+              dispatch(
+                updateVehicle({
+                  ...vehicle,
+                  state: 'arrived',
+                  arrivedAt: new Date().toISOString(),
+                }),
+              )
             }
           >
             Arrived
@@ -139,7 +145,13 @@ function VehicleCard({ vehicle, onEdit }: { vehicle: Vehicle; onEdit: (v: Vehicl
           <Button
             size="small"
             onClick={() =>
-              dispatch(updateVehicle({ ...vehicle, state: 'assigned', assignedAt: new Date().toISOString() }))
+              dispatch(
+                updateVehicle({
+                  ...vehicle,
+                  state: 'assigned',
+                  assignedAt: new Date().toISOString(),
+                }),
+              )
             }
           >
             Assigned
@@ -149,7 +161,13 @@ function VehicleCard({ vehicle, onEdit }: { vehicle: Vehicle; onEdit: (v: Vehicl
           <Button
             size="small"
             onClick={() =>
-              dispatch(updateVehicle({ ...vehicle, state: 'dispatched', dispatchedAt: new Date().toISOString() }))
+              dispatch(
+                updateVehicle({
+                  ...vehicle,
+                  state: 'dispatched',
+                  dispatchedAt: new Date().toISOString(),
+                }),
+              )
             }
           >
             Dispatched
