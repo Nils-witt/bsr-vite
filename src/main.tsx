@@ -7,7 +7,7 @@ import { store } from './store/store';
 import { WebRTCSyncProvider } from './context/WebRTCSyncContext';
 import VehiclePersistenceProvider from './context/VehiclePersistenceProvider';
 import App from './App.tsx';
-
+import './index.scss';
 const theme = createTheme();
 
 createRoot(document.getElementById('root')!).render(

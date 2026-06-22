@@ -99,7 +99,6 @@ function EditVehicleDialog({ vehicle, onClose }: Props) {
             label="Führer"
             name="fuehrer"
             type="number"
-            inputProps={{ min: 0 }}
             value={form?.fuehrer ?? ''}
             onChange={handleChange}
             required
@@ -109,7 +108,6 @@ function EditVehicleDialog({ vehicle, onClose }: Props) {
             label="Unterführer"
             name="unterfuehrer"
             type="number"
-            inputProps={{ min: 0 }}
             value={form?.unterfuehrer ?? ''}
             onChange={handleChange}
             required
@@ -119,7 +117,6 @@ function EditVehicleDialog({ vehicle, onClose }: Props) {
             label="Helfer"
             name="helfer"
             type="number"
-            inputProps={{ min: 0 }}
             value={form?.helfer ?? ''}
             onChange={handleChange}
             required

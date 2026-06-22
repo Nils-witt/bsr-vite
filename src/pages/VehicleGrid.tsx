@@ -7,10 +7,16 @@ import {
   Card,
   CardActions,
   CardContent,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
   SpeedDial,
   Stack,
   Typography,
 } from '@mui/material';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Vehicle, type VehicleState } from '../data/Vehicle';
 import EditVehicleDialog from '../components/EditVehicleDialog';
 import CreateVehicleDialog from '../components/CreateVehicleDialog';
@@ -26,7 +32,7 @@ function VehicleGrid() {
   }, [vehicles]);
   return (
     <>
-      <Stack direction="row">
+      <Stack direction="row" useFlexGap sx={{ flexWrap: 'wrap' }}>
         <VehicleColumn
           state="preregistered"
           vehicles={vehicles.filter((value) => value.state == 'preregistered')}
@@ -35,6 +41,11 @@ function VehicleGrid() {
         <VehicleColumn
           state="arrived"
           vehicles={vehicles.filter((value) => value.state == 'arrived')}
+          onEdit={setEditing}
+        />
+        <VehicleColumn
+          state="registered"
+          vehicles={vehicles.filter((value) => value.state == 'registered')}
           onEdit={setEditing}
         />
         <VehicleColumn
@@ -84,8 +95,31 @@ function VehicleColumn({
   );
 }
 
+const ALL_STATES: VehicleState[] = [
+  'preregistered',
+  'arrived',
+  'registered',
+  'assigned',
+  'dispatched',
+];
+
+const STATE_TIMESTAMP_KEY: Partial<Record<VehicleState, keyof Vehicle>> = {
+  arrived: 'arrivedAt',
+  assigned: 'assignedAt',
+  dispatched: 'dispatchedAt',
+};
+
 function VehicleCard({ vehicle, onEdit }: { vehicle: Vehicle; onEdit: (v: Vehicle) => void }) {
   const dispatch = useAppDispatch();
+  const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
+
+  function handleStateChange(newState: VehicleState) {
+    const tsKey = STATE_TIMESTAMP_KEY[newState];
+    const update: Partial<Vehicle> = { state: newState };
+    if (tsKey) update[tsKey] = new Date().toISOString() as never;
+    dispatch(updateVehicle({ ...vehicle, ...update }));
+    setMenuAnchor(null);
+  }
 
   return (
     <Card sx={{ minWidth: 275, mb: 2 }}>
@@ -127,54 +161,25 @@ function VehicleCard({ vehicle, onEdit }: { vehicle: Vehicle; onEdit: (v: Vehicl
         <Button size="small" onClick={() => onEdit(vehicle)}>
           Edit
         </Button>
-        {vehicle.state === 'preregistered' && (
-          <Button
-            size="small"
-            onClick={() =>
-              dispatch(
-                updateVehicle({
-                  ...vehicle,
-                  state: 'arrived',
-                  arrivedAt: new Date().toISOString(),
-                }),
-              )
-            }
-          >
-            Arrived
-          </Button>
-        )}
-        {vehicle.state === 'arrived' && (
-          <Button
-            size="small"
-            onClick={() =>
-              dispatch(
-                updateVehicle({
-                  ...vehicle,
-                  state: 'assigned',
-                  assignedAt: new Date().toISOString(),
-                }),
-              )
-            }
-          >
-            Assigned
-          </Button>
-        )}
-        {vehicle.state === 'assigned' && (
-          <Button
-            size="small"
-            onClick={() =>
-              dispatch(
-                updateVehicle({
-                  ...vehicle,
-                  state: 'dispatched',
-                  dispatchedAt: new Date().toISOString(),
-                }),
-              )
-            }
-          >
-            Dispatched
-          </Button>
-        )}
+        <Button
+          size="small"
+          startIcon={<SwapHorizIcon />}
+          onClick={(e) => setMenuAnchor(e.currentTarget)}
+        >
+          {vehicle.state}
+        </Button>
+        <Menu anchorEl={menuAnchor} open={!!menuAnchor} onClose={() => setMenuAnchor(null)}>
+          {ALL_STATES.map((s) => (
+            <MenuItem key={s} selected={s === vehicle.state} onClick={() => handleStateChange(s)}>
+              {s === vehicle.state && (
+                <ListItemIcon>
+                  <CheckCircleIcon fontSize="small" />
+                </ListItemIcon>
+              )}
+              <ListItemText inset={s !== vehicle.state}>{s}</ListItemText>
+            </MenuItem>
+          ))}
+        </Menu>
       </CardActions>
     </Card>
   );

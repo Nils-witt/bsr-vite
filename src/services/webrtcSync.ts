@@ -24,7 +24,6 @@ class WebRTCSync {
 
   private peer: Peer | null = null;
   private connections: DataConnection[] = [];
-  private isHost = false;
   private unsubscribe: (() => void) | null = null;
   private applyingRemote = false;
 
@@ -45,7 +44,9 @@ class WebRTCSync {
 
   startHost(): Promise<string> {
     if (this.peer) {
-      warn('startHost called while a connection is already active — destroying existing connection');
+      warn(
+        'startHost called while a connection is already active — destroying existing connection',
+      );
       this.destroy();
     }
 
@@ -58,7 +59,6 @@ class WebRTCSync {
       this.peer.on('open', (id) => {
         log(`Host open, peer ID: ${id}`);
         localStorage.setItem(WebRTCSync.STORAGE_KEY, id);
-        this.isHost = true;
         this.peer!.on('connection', (conn) => this.handleIncoming(conn));
         this.unsubscribe = store.subscribe(() => {
           if (!this.applyingRemote) this.broadcast();
@@ -75,7 +75,9 @@ class WebRTCSync {
 
   connectToHost(hostId: string): Promise<void> {
     if (this.peer) {
-      warn('connectToHost called while a connection is already active — destroying existing connection');
+      warn(
+        'connectToHost called while a connection is already active — destroying existing connection',
+      );
       this.destroy();
     }
 
@@ -120,7 +122,6 @@ class WebRTCSync {
     this.peer?.destroy();
     this.peer = null;
     this.connections = [];
-    this.isHost = false;
   }
 
   private handleIncoming(conn: DataConnection) {
@@ -139,7 +140,9 @@ class WebRTCSync {
 
       conn.on('data', (data) => {
         const msg = data as SyncMessage;
-        log(`Received state from client ${conn.peer} (${msg.vehicles.length} vehicles), relaying to ${this.connections.length - 1} peers`);
+        log(
+          `Received state from client ${conn.peer} (${msg.vehicles.length} vehicles), relaying to ${this.connections.length - 1} peers`,
+        );
         this.applyRemote(msg.vehicles);
         this.connections.filter((c) => c !== conn).forEach((c) => this.sendTo(c, msg.vehicles));
       });
