@@ -5,6 +5,7 @@ import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 import { WebRTCSyncProvider } from './context/WebRTCSyncContext';
+import VehiclePersistenceProvider from './context/VehiclePersistenceProvider';
 import App from './App.tsx';
 
 const theme = createTheme();
@@ -15,9 +16,11 @@ createRoot(document.getElementById('root')!).render(
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <BrowserRouter>
-          <WebRTCSyncProvider>
-            <App />
-          </WebRTCSyncProvider>
+          <VehiclePersistenceProvider>
+            <WebRTCSyncProvider>
+              <App />
+            </WebRTCSyncProvider>
+          </VehiclePersistenceProvider>
         </BrowserRouter>
       </ThemeProvider>
     </Provider>
