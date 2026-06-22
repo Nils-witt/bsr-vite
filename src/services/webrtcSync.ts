@@ -11,6 +11,8 @@ class WebRTCSync {
   private connections: DataConnection[] = [];
   private isHost = false;
   private unsubscribe: (() => void) | null = null;
+  // Prevents re-broadcasting updates that originated remotely
+  private applyingRemote = false;
 
   get peerId() {
     return this.peer?.id ?? null;
@@ -20,7 +22,6 @@ class WebRTCSync {
     return this.connections.length;
   }
 
-  /** Start as host — returns the generated peer ID */
   startHost(): Promise<string> {
     return new Promise((resolve, reject) => {
       this.peer = new Peer();
@@ -28,8 +29,9 @@ class WebRTCSync {
       this.peer.on('open', (id) => {
         this.isHost = true;
         this.peer!.on('connection', (conn) => this.handleIncoming(conn));
-        // Broadcast on every store change
-        this.unsubscribe = store.subscribe(() => this.broadcast());
+        this.unsubscribe = store.subscribe(() => {
+          if (!this.applyingRemote) this.broadcast();
+        });
         resolve(id);
       });
 
@@ -37,7 +39,6 @@ class WebRTCSync {
     });
   }
 
-  /** Connect to an existing host */
   connectToHost(hostId: string): Promise<void> {
     return new Promise((resolve, reject) => {
       this.peer = new Peer();
@@ -48,6 +49,10 @@ class WebRTCSync {
         conn.on('open', () => {
           this.connections.push(conn);
           conn.on('data', (data) => this.handleData(data as SyncMessage));
+          // Subscribe and send local changes up to the host
+          this.unsubscribe = store.subscribe(() => {
+            if (!this.applyingRemote) this.sendTo(conn, store.getState().vehicles.vehicles);
+          });
           resolve();
         });
 
@@ -72,8 +77,16 @@ class WebRTCSync {
       conn.on('close', () => {
         this.connections = this.connections.filter((c) => c !== conn);
       });
-      // Send current state immediately on connect
+      // Send current state to the new client immediately
       this.sendTo(conn, store.getState().vehicles.vehicles);
+      // Relay updates from this client to all other connections
+      conn.on('data', (data) => {
+        const msg = data as SyncMessage;
+        this.applyRemote(msg.vehicles);
+        this.connections
+          .filter((c) => c !== conn)
+          .forEach((c) => this.sendTo(c, msg.vehicles));
+      });
     });
   }
 
@@ -90,8 +103,14 @@ class WebRTCSync {
 
   private handleData(msg: SyncMessage) {
     if (msg.type === 'STATE_SYNC') {
-      store.dispatch(setAllVehicles(msg.vehicles));
+      this.applyRemote(msg.vehicles);
     }
+  }
+
+  private applyRemote(vehicles: Vehicle[]) {
+    this.applyingRemote = true;
+    store.dispatch(setAllVehicles(vehicles));
+    this.applyingRemote = false;
   }
 }
 

@@ -46,12 +46,15 @@ function EditVehicleDialog({ vehicle, onClose }: Props) {
     const unterfuehrer = Number(form.unterfuehrer);
     const helfer = Number(form.helfer);
 
-    const updated = new Vehicle(vehicle.id, form.name, form.plate, form.typ, {
-      fuehrer,
-      unterfuehrer,
-      helfer,
-      sum: fuehrer + unterfuehrer + helfer,
-    });
+    const updated = new Vehicle(
+      vehicle.id,
+      form.name,
+      form.plate,
+      form.typ,
+      { fuehrer, unterfuehrer, helfer, sum: fuehrer + unterfuehrer + helfer },
+      vehicle.createdAt,
+      new Date().toISOString(),
+    );
     updated.state = vehicle.state;
 
     dispatch(updateVehicle(updated));

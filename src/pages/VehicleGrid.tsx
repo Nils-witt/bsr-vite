@@ -100,6 +100,11 @@ function VehicleCard({ vehicle, onEdit }: { vehicle: Vehicle; onEdit: (v: Vehicl
           {vehicle.personnel.fuehrer} / {vehicle.personnel.unterfuehrer} /{' '}
           {vehicle.personnel.helfer} // {vehicle.personnel.sum}
         </Typography>
+        {vehicle.arrivedAt && (
+          <Typography variant="caption" color="text.secondary">
+            Arrived: {new Date(vehicle.arrivedAt).toLocaleTimeString()}
+          </Typography>
+        )}
       </CardContent>
       <CardActions>
         <Button size="small" onClick={() => onEdit(vehicle)}>
@@ -108,7 +113,9 @@ function VehicleCard({ vehicle, onEdit }: { vehicle: Vehicle; onEdit: (v: Vehicl
         {vehicle.state === 'preregistered' && (
           <Button
             size="small"
-            onClick={() => dispatch(updateVehicle({ ...vehicle, state: 'arrived' }))}
+            onClick={() =>
+              dispatch(updateVehicle({ ...vehicle, state: 'arrived', arrivedAt: new Date().toISOString() }))
+            }
           >
             Arrived
           </Button>

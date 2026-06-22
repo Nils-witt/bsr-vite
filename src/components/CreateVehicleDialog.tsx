@@ -43,7 +43,7 @@ function CreateVehicleDialog({ open, onClose }: Props) {
 
     dispatch(
       addVehicle(
-        new Vehicle(Date.now(), form.name, form.plate, form.typ, {
+        new Vehicle(crypto.randomUUID(), form.name, form.plate, form.typ, {
           fuehrer,
           unterfuehrer,
           helfer,
