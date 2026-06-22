@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  Autocomplete,
   Button,
   Dialog,
   DialogActions,
@@ -11,6 +12,26 @@ import {
 import { Vehicle } from '../data/Vehicle';
 import { useAppDispatch } from '../store/hooks';
 import { addVehicle } from '../store/vehicleSlice';
+
+const VEHICLE_TYPE_PRESETS = [
+  'HLF 20',
+  'HLF 10',
+  'LF 20',
+  'LF 10',
+  'LF 8/6',
+  'TLF 3000',
+  'TLF 2000',
+  'DLK 23/12',
+  'RW',
+  'GW-L2',
+  'GW-Mess',
+  'ELW 1',
+  'ELW 2',
+  'MTF',
+  'KTW',
+  'RTW',
+  'NEF',
+];
 
 interface Props {
   open: boolean;
@@ -84,13 +105,14 @@ function CreateVehicleDialog({ open, onClose }: Props) {
             required
             fullWidth
           />
-          <TextField
-            label="Type"
-            name="typ"
+          <Autocomplete
+            freeSolo
+            options={VEHICLE_TYPE_PRESETS}
             value={form.typ}
-            onChange={handleChange}
-            required
-            fullWidth
+            onInputChange={(_, value) => setForm((prev) => ({ ...prev, typ: value }))}
+            renderInput={(params) => (
+              <TextField {...params} label="Type" name="typ" required fullWidth />
+            )}
           />
 
           <Divider>Personnel</Divider>

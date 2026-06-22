@@ -16,7 +16,10 @@ export class Vehicle {
   state: VehicleState = 'preregistered';
   createdAt: string;
   updatedAt: string;
+  preregisteredAt: string;
   arrivedAt?: string;
+  assignedAt?: string;
+  dispatchedAt?: string;
 
   constructor(
     id: string,
@@ -27,6 +30,8 @@ export class Vehicle {
     createdAt?: string,
     updatedAt?: string,
     arrivedAt?: string,
+    assignedAt?: string,
+    dispatchedAt?: string,
   ) {
     this.id = id;
     this.name = name;
@@ -36,6 +41,9 @@ export class Vehicle {
     const now = new Date().toISOString();
     this.createdAt = createdAt ?? now;
     this.updatedAt = updatedAt ?? now;
+    this.preregisteredAt = now;
     this.arrivedAt = arrivedAt;
+    this.assignedAt = assignedAt;
+    this.dispatchedAt = dispatchedAt;
   }
 }

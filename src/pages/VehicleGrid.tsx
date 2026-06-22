@@ -100,9 +100,24 @@ function VehicleCard({ vehicle, onEdit }: { vehicle: Vehicle; onEdit: (v: Vehicl
           {vehicle.personnel.fuehrer} / {vehicle.personnel.unterfuehrer} /{' '}
           {vehicle.personnel.helfer} // {vehicle.personnel.sum}
         </Typography>
+        {vehicle.preregisteredAt && (
+          <Typography variant="caption" display="block" color="text.secondary">
+            Preregistered: {new Date(vehicle.preregisteredAt).toLocaleTimeString()}
+          </Typography>
+        )}
         {vehicle.arrivedAt && (
-          <Typography variant="caption" color="text.secondary">
+          <Typography variant="caption" display="block" color="text.secondary">
             Arrived: {new Date(vehicle.arrivedAt).toLocaleTimeString()}
+          </Typography>
+        )}
+        {vehicle.assignedAt && (
+          <Typography variant="caption" display="block" color="text.secondary">
+            Assigned: {new Date(vehicle.assignedAt).toLocaleTimeString()}
+          </Typography>
+        )}
+        {vehicle.dispatchedAt && (
+          <Typography variant="caption" display="block" color="text.secondary">
+            Dispatched: {new Date(vehicle.dispatchedAt).toLocaleTimeString()}
           </Typography>
         )}
       </CardContent>
@@ -118,6 +133,26 @@ function VehicleCard({ vehicle, onEdit }: { vehicle: Vehicle; onEdit: (v: Vehicl
             }
           >
             Arrived
+          </Button>
+        )}
+        {vehicle.state === 'arrived' && (
+          <Button
+            size="small"
+            onClick={() =>
+              dispatch(updateVehicle({ ...vehicle, state: 'assigned', assignedAt: new Date().toISOString() }))
+            }
+          >
+            Assigned
+          </Button>
+        )}
+        {vehicle.state === 'assigned' && (
+          <Button
+            size="small"
+            onClick={() =>
+              dispatch(updateVehicle({ ...vehicle, state: 'dispatched', dispatchedAt: new Date().toISOString() }))
+            }
+          >
+            Dispatched
           </Button>
         )}
       </CardActions>
