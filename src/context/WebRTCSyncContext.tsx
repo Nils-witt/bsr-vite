@@ -7,6 +7,7 @@ interface WebRTCSyncContextValue {
   status: Status;
   peerId: string | null;
   error: string | null;
+  connectedPeers: string[];
   startHost: () => Promise<void>;
   connectToHost: (hostId: string) => Promise<void>;
   disconnect: () => void;
@@ -18,6 +19,12 @@ export function WebRTCSyncProvider({ children }: { children: React.ReactNode }) 
   const [status, setStatus] = useState<Status>('idle');
   const [peerId, setPeerId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [connectedPeers, setConnectedPeers] = useState<string[]>([]);
+
+  useEffect(() => {
+    WebRTCSync.getInstance().setOnConnectionsChange(setConnectedPeers);
+    return () => WebRTCSync.getInstance().setOnConnectionsChange(null);
+  }, []);
 
   const startHost = useCallback(async () => {
     setStatus('connecting');
@@ -62,7 +69,7 @@ export function WebRTCSyncProvider({ children }: { children: React.ReactNode }) 
 
   return (
     <WebRTCSyncContext.Provider
-      value={{ status, peerId, error, startHost, connectToHost, disconnect }}
+      value={{ status, peerId, error, connectedPeers, startHost, connectToHost, disconnect }}
     >
       {children}
     </WebRTCSyncContext.Provider>

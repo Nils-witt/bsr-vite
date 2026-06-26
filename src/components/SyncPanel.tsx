@@ -7,7 +7,11 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
   IconButton,
+  List,
+  ListItem,
+  ListItemText,
   TextField,
   Tooltip,
   Typography,
@@ -22,7 +26,7 @@ import { WebRTCSync } from '../services/webrtcSync';
 import QrScanner from './QrScanner';
 
 function SyncPanel() {
-  const { status, peerId, error, startHost, connectToHost, disconnect } = useWebRTCSync();
+  const { status, peerId, error, connectedPeers, startHost, connectToHost, disconnect } = useWebRTCSync();
   const [open, setOpen] = useState(false);
   const [hostId, setHostId] = useState(() => WebRTCSync.getLastHostId() ?? '');
   const [scanning, setScanning] = useState(false);
@@ -100,7 +104,12 @@ function SyncPanel() {
 
           {status === 'hosting' && peerId && (
             <>
-              <Chip label="Hosting" color="success" sx={{ alignSelf: 'flex-start' }} />
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Chip label="Hosting" color="success" />
+                <Typography variant="body2" color="text.secondary">
+                  {connectedPeers.length} client{connectedPeers.length !== 1 ? 's' : ''} connected
+                </Typography>
+              </Box>
               <Typography variant="body2">Share this ID with others:</Typography>
               <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 <QRCodeSVG value={peerId} size={180} />
@@ -118,6 +127,24 @@ function SyncPanel() {
                   </IconButton>
                 </Tooltip>
               </Box>
+              {connectedPeers.length > 0 && (
+                <>
+                  <Divider />
+                  <Typography variant="body2" color="text.secondary">
+                    Connected clients:
+                  </Typography>
+                  <List dense disablePadding>
+                    {connectedPeers.map((peer) => (
+                      <ListItem key={peer} disableGutters>
+                        <ListItemText
+                          primary={peer}
+                          slotProps={{ primary: { sx: { fontFamily: 'monospace', fontSize: '0.75rem', wordBreak: 'break-all' } } }}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                </>
+              )}
             </>
           )}
 

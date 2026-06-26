@@ -26,6 +26,15 @@ class WebRTCSync {
   private connections: DataConnection[] = [];
   private unsubscribe: (() => void) | null = null;
   private applyingRemote = false;
+  private onConnectionsChange: ((peers: string[]) => void) | null = null;
+
+  setOnConnectionsChange(cb: ((peers: string[]) => void) | null) {
+    this.onConnectionsChange = cb;
+  }
+
+  private notifyConnections() {
+    this.onConnectionsChange?.(this.connections.map((c) => c.peer));
+  }
 
   get peerId() {
     return this.peer?.id ?? null;
@@ -130,10 +139,12 @@ class WebRTCSync {
     conn.on('open', () => {
       log(`Incoming connection open: ${conn.peer} (total: ${this.connections.length + 1})`);
       this.connections.push(conn);
+      this.notifyConnections();
 
       conn.on('close', () => {
         log(`Client disconnected: ${conn.peer} (total: ${this.connections.length - 1})`);
         this.connections = this.connections.filter((c) => c !== conn);
+        this.notifyConnections();
       });
 
       this.sendTo(conn, store.getState().vehicles.vehicles);
