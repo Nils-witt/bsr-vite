@@ -16,13 +16,14 @@ function PWAUpdatePrompt() {
     <Snackbar open={needRefresh} anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
       <SnackbarContent
         message={
-          <Stack direction="row" alignItems="center" gap={1}>
-            <SystemUpdateAltIcon fontSize="small" />
-            A new version is available.
-          </Stack>
+          <>
+            <Stack direction="row">
+              <SystemUpdateAltIcon fontSize="small" />A new version is available.
+            </Stack>
+          </>
         }
         action={
-          <Stack direction="row" gap={1}>
+          <Stack direction="row">
             <Button color="inherit" size="small" onClick={() => updateServiceWorker(true)}>
               Reload
             </Button>
