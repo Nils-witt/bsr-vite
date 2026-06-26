@@ -8,7 +8,7 @@ import {
   Divider,
   TextField,
 } from '@mui/material';
-import { Vehicle } from '../data/Vehicle';
+import { Vehicle, type VehicleLogEntry } from '../data/Vehicle';
 import { useAppDispatch } from '../store/hooks';
 import { updateVehicle } from '../store/vehicleSlice';
 
@@ -45,6 +45,24 @@ function EditVehicleDialog({ vehicle, onClose }: Props) {
     const fuehrer = Number(form.fuehrer);
     const unterfuehrer = Number(form.unterfuehrer);
     const helfer = Number(form.helfer);
+    const now = new Date().toISOString();
+
+    const changes: string[] = [];
+    if (form.name !== vehicle.name) changes.push(`name: ${vehicle.name} → ${form.name}`);
+    if (form.plate !== vehicle.plate) changes.push(`plate: ${vehicle.plate} → ${form.plate}`);
+    if (form.typ !== vehicle.typ) changes.push(`type: ${vehicle.typ} → ${form.typ}`);
+    if (fuehrer !== vehicle.personnel.fuehrer)
+      changes.push(`Führer: ${vehicle.personnel.fuehrer} → ${fuehrer}`);
+    if (unterfuehrer !== vehicle.personnel.unterfuehrer)
+      changes.push(`Unterführer: ${vehicle.personnel.unterfuehrer} → ${unterfuehrer}`);
+    if (helfer !== vehicle.personnel.helfer)
+      changes.push(`Helfer: ${vehicle.personnel.helfer} → ${helfer}`);
+
+    const logEntry: VehicleLogEntry = {
+      timestamp: now,
+      type: 'edited',
+      description: changes.length > 0 ? changes.join(', ') : 'Saved without changes',
+    };
 
     const updated = new Vehicle(
       vehicle.id,
@@ -53,9 +71,14 @@ function EditVehicleDialog({ vehicle, onClose }: Props) {
       form.typ,
       { fuehrer, unterfuehrer, helfer, sum: fuehrer + unterfuehrer + helfer },
       vehicle.createdAt,
-      new Date().toISOString(),
+      now,
+      vehicle.arrivedAt,
+      vehicle.assignedAt,
+      vehicle.dispatchedAt,
+      [...(vehicle.log ?? []), logEntry],
     );
     updated.state = vehicle.state;
+    updated.preregisteredAt = vehicle.preregisteredAt;
 
     dispatch(updateVehicle(updated));
     onClose();

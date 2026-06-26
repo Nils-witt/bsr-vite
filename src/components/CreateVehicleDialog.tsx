@@ -9,7 +9,7 @@ import {
   Divider,
   TextField,
 } from '@mui/material';
-import { Vehicle } from '../data/Vehicle';
+import { Vehicle, type VehicleLogEntry } from '../data/Vehicle';
 import { useAppDispatch } from '../store/hooks';
 import { addVehicle } from '../store/vehicleSlice';
 
@@ -62,14 +62,25 @@ function CreateVehicleDialog({ open, onClose }: Props) {
     const unterfuehrer = Number(form.unterfuehrer);
     const helfer = Number(form.helfer);
 
+    const now = new Date().toISOString();
+    const initialLog: VehicleLogEntry[] = [
+      { timestamp: now, type: 'created', description: 'Vehicle created' },
+    ];
     dispatch(
       addVehicle(
-        new Vehicle(crypto.randomUUID(), form.name, form.plate, form.typ, {
-          fuehrer,
-          unterfuehrer,
-          helfer,
-          sum: fuehrer + unterfuehrer + helfer,
-        }),
+        new Vehicle(
+          crypto.randomUUID(),
+          form.name,
+          form.plate,
+          form.typ,
+          { fuehrer, unterfuehrer, helfer, sum: fuehrer + unterfuehrer + helfer },
+          now,
+          now,
+          undefined,
+          undefined,
+          undefined,
+          initialLog,
+        ),
       ),
     );
 

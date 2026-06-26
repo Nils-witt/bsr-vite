@@ -1,3 +1,9 @@
+export interface VehicleLogEntry {
+  timestamp: string;
+  type: 'created' | 'state_change' | 'edited';
+  description: string;
+}
+
 export interface IPersonell {
   sum: number;
   fuehrer: number;
@@ -20,6 +26,7 @@ export class Vehicle {
   arrivedAt?: string;
   assignedAt?: string;
   dispatchedAt?: string;
+  log: VehicleLogEntry[];
 
   constructor(
     id: string,
@@ -32,6 +39,7 @@ export class Vehicle {
     arrivedAt?: string,
     assignedAt?: string,
     dispatchedAt?: string,
+    log?: VehicleLogEntry[],
   ) {
     this.id = id;
     this.name = name;
@@ -45,5 +53,6 @@ export class Vehicle {
     this.arrivedAt = arrivedAt;
     this.assignedAt = assignedAt;
     this.dispatchedAt = dispatchedAt;
+    this.log = log ?? [];
   }
 }

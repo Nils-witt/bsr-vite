@@ -17,15 +17,17 @@ import {
 } from '@mui/material';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { Vehicle, type VehicleState } from '../data/Vehicle';
+import { Vehicle, type VehicleLogEntry, type VehicleState } from '../data/Vehicle';
 import EditVehicleDialog from '../components/EditVehicleDialog';
 import CreateVehicleDialog from '../components/CreateVehicleDialog';
+import VehicleLogDialog from '../components/VehicleLogDialog';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 
 function VehicleGrid() {
   const vehicles = useAppSelector((state) => state.vehicles.vehicles);
   const [editing, setEditing] = useState<Vehicle | null>(null);
   const [creating, setCreating] = useState(false);
+  const [logVehicle, setLogVehicle] = useState<Vehicle | null>(null);
 
   useEffect(() => {
     console.log(vehicles);
@@ -37,26 +39,31 @@ function VehicleGrid() {
           state="preregistered"
           vehicles={vehicles.filter((value) => value.state == 'preregistered')}
           onEdit={setEditing}
+          onLog={setLogVehicle}
         />
         <VehicleColumn
           state="arrived"
           vehicles={vehicles.filter((value) => value.state == 'arrived')}
           onEdit={setEditing}
+          onLog={setLogVehicle}
         />
         <VehicleColumn
           state="registered"
           vehicles={vehicles.filter((value) => value.state == 'registered')}
           onEdit={setEditing}
+          onLog={setLogVehicle}
         />
         <VehicleColumn
           state="assigned"
           vehicles={vehicles.filter((value) => value.state == 'assigned')}
           onEdit={setEditing}
+          onLog={setLogVehicle}
         />
         <VehicleColumn
           state="dispatched"
           vehicles={vehicles.filter((value) => value.state == 'dispatched')}
           onEdit={setEditing}
+          onLog={setLogVehicle}
         />
       </Stack>
 
@@ -72,6 +79,7 @@ function VehicleGrid() {
 
       <CreateVehicleDialog open={creating} onClose={() => setCreating(false)} />
       <EditVehicleDialog vehicle={editing} onClose={() => setEditing(null)} />
+      <VehicleLogDialog vehicle={logVehicle} onClose={() => setLogVehicle(null)} />
     </>
   );
 }
@@ -80,16 +88,18 @@ function VehicleColumn({
   state,
   vehicles,
   onEdit,
+  onLog,
 }: {
   state: VehicleState;
   vehicles: Vehicle[];
   onEdit: (v: Vehicle) => void;
+  onLog: (v: Vehicle) => void;
 }) {
   return (
     <Box sx={{ padding: '2rem' }}>
       <Typography variant={'h5'}>{state.toUpperCase()}</Typography>
       {vehicles.map((v) => (
-        <VehicleCard key={v.id} vehicle={v} onEdit={onEdit} />
+        <VehicleCard key={v.id} vehicle={v} onEdit={onEdit} onLog={onLog} />
       ))}
     </Box>
   );
@@ -109,15 +119,31 @@ const STATE_TIMESTAMP_KEY: Partial<Record<VehicleState, keyof Vehicle>> = {
   dispatched: 'dispatchedAt',
 };
 
-function VehicleCard({ vehicle, onEdit }: { vehicle: Vehicle; onEdit: (v: Vehicle) => void }) {
+function VehicleCard({
+  vehicle,
+  onEdit,
+  onLog,
+}: {
+  vehicle: Vehicle;
+  onEdit: (v: Vehicle) => void;
+  onLog: (v: Vehicle) => void;
+}) {
   const dispatch = useAppDispatch();
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
 
   function handleStateChange(newState: VehicleState) {
     const tsKey = STATE_TIMESTAMP_KEY[newState];
-    const update: Partial<Vehicle> = { state: newState };
-    if (tsKey) update[tsKey] = new Date().toISOString() as never;
-    dispatch(updateVehicle({ ...vehicle, ...update }));
+    const now = new Date().toISOString();
+    const update: Partial<Vehicle> = { state: newState, updatedAt: now };
+    if (tsKey) update[tsKey] = now as never;
+    const logEntry: VehicleLogEntry = {
+      timestamp: now,
+      type: 'state_change',
+      description: `State changed from ${vehicle.state} to ${newState}`,
+    };
+    dispatch(
+      updateVehicle({ ...vehicle, ...update, log: [...(vehicle.log ?? []), logEntry] }),
+    );
     setMenuAnchor(null);
   }
 
@@ -160,6 +186,9 @@ function VehicleCard({ vehicle, onEdit }: { vehicle: Vehicle; onEdit: (v: Vehicl
       <CardActions>
         <Button size="small" onClick={() => onEdit(vehicle)}>
           Edit
+        </Button>
+        <Button size="small" onClick={() => onLog(vehicle)}>
+          Log
         </Button>
         <Button
           size="small"
