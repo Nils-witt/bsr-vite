@@ -49,7 +49,7 @@ function GlobalLogDrawer({ open, onClose }: Props) {
     .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
 
   return (
-    <Drawer anchor="right" open={open} onClose={onClose} PaperProps={{ sx: { width: 400 } }}>
+    <Drawer anchor="right" open={open} onClose={onClose} ModalProps={{ sx: { width: 400 } }}>
       <Toolbar sx={{ justifyContent: 'space-between' }}>
         <Typography variant="h6">Global Log</Typography>
         <IconButton edge="end" onClick={onClose}>
@@ -73,7 +73,7 @@ function GlobalLogDrawer({ open, onClose }: Props) {
               <ListItemText
                 primary={
                   <Box component="span" sx={{ display: 'flex', gap: 1, alignItems: 'baseline' }}>
-                    <Typography component="span" variant="body2" fontWeight={600}>
+                    <Typography component="span" variant="body2" sx={{ fontWeight: 600 }}>
                       {entry.vehicleName}
                     </Typography>
                     <Typography component="span" variant="caption" color="text.secondary">
