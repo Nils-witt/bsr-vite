@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import {
   Box,
   Button,
   Chip,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -23,7 +24,8 @@ import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 import { QRCodeSVG } from 'qrcode.react';
 import { useWebRTCSync } from '../context/WebRTCSyncContext';
 import { WebRTCSync } from '../services/webrtcSync';
-import QrScanner from './QrScanner';
+
+const QrScanner = lazy(() => import('./QrScanner'));
 
 function SyncPanel() {
   const { status, peerId, error, connectedPeers, startHost, connectToHost, disconnect } = useWebRTCSync();
@@ -95,7 +97,11 @@ function SyncPanel() {
           {status === 'idle' && scanning && (
             <>
               <Typography variant="body2">Point your camera at the host's QR code:</Typography>
-              <QrScanner onScan={handleScan} />
+              <Suspense
+                fallback={<CircularProgress size={32} sx={{ alignSelf: 'center' }} />}
+              >
+                <QrScanner onScan={handleScan} />
+              </Suspense>
               <Button onClick={() => setScanning(false)}>Cancel</Button>
             </>
           )}

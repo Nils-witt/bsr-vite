@@ -1,13 +1,20 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { AppBar, IconButton, Toolbar, Typography } from '@mui/material';
 import HistoryIcon from '@mui/icons-material/History';
 import { Link } from 'react-router-dom';
 import SyncPanel from './SyncPanel';
-import GlobalLogDrawer from './GlobalLogDrawer';
 import { version } from '../../package.json';
+
+const GlobalLogDrawer = lazy(() => import('./GlobalLogDrawer'));
 
 function NavBar() {
   const [logOpen, setLogOpen] = useState(false);
+  const [logMounted, setLogMounted] = useState(false);
+
+  function openLog() {
+    setLogMounted(true);
+    setLogOpen(true);
+  }
 
   return (
     <>
@@ -24,13 +31,17 @@ function NavBar() {
               v{version}
             </Typography>
           </Typography>
-          <IconButton color="inherit" onClick={() => setLogOpen(true)}>
+          <IconButton color="inherit" onClick={openLog}>
             <HistoryIcon />
           </IconButton>
           <SyncPanel />
         </Toolbar>
       </AppBar>
-      <GlobalLogDrawer open={logOpen} onClose={() => setLogOpen(false)} />
+      {logMounted && (
+        <Suspense fallback={null}>
+          <GlobalLogDrawer open={logOpen} onClose={() => setLogOpen(false)} />
+        </Suspense>
+      )}
     </>
   );
 }

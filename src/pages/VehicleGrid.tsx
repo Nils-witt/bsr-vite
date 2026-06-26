@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { updateVehicle } from '../store/vehicleSlice';
 import {
@@ -18,9 +18,9 @@ import {
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Vehicle, type VehicleLogEntry, type VehicleState } from '../data/Vehicle';
-import EditVehicleDialog from '../components/EditVehicleDialog';
-import CreateVehicleDialog from '../components/CreateVehicleDialog';
-import VehicleLogDialog from '../components/VehicleLogDialog';
+const EditVehicleDialog = lazy(() => import('../components/EditVehicleDialog'));
+const CreateVehicleDialog = lazy(() => import('../components/CreateVehicleDialog'));
+const VehicleLogDialog = lazy(() => import('../components/VehicleLogDialog'));
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 
 function VehicleGrid() {
@@ -77,9 +77,11 @@ function VehicleGrid() {
         />
       </Box>
 
-      <CreateVehicleDialog open={creating} onClose={() => setCreating(false)} />
-      <EditVehicleDialog vehicle={editing} onClose={() => setEditing(null)} />
-      <VehicleLogDialog vehicle={logVehicle} onClose={() => setLogVehicle(null)} />
+      <Suspense fallback={null}>
+        <CreateVehicleDialog open={creating} onClose={() => setCreating(false)} />
+        <EditVehicleDialog vehicle={editing} onClose={() => setEditing(null)} />
+        <VehicleLogDialog vehicle={logVehicle} onClose={() => setLogVehicle(null)} />
+      </Suspense>
     </>
   );
 }
