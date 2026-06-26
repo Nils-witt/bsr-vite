@@ -143,9 +143,7 @@ function VehicleCard({
       type: 'state_change',
       description: `State changed from ${vehicle.state} to ${newState}`,
     };
-    dispatch(
-      updateVehicle({ ...vehicle, ...update, log: [...(vehicle.log ?? []), logEntry] }),
-    );
+    dispatch(updateVehicle({ ...vehicle, ...update, log: [...(vehicle.log ?? []), logEntry] }));
     setMenuAnchor(null);
   }
 

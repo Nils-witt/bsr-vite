@@ -28,7 +28,8 @@ import { WebRTCSync } from '../services/webrtcSync';
 const QrScanner = lazy(() => import('./QrScanner'));
 
 function SyncPanel() {
-  const { status, peerId, error, connectedPeers, startHost, connectToHost, disconnect } = useWebRTCSync();
+  const { status, peerId, error, connectedPeers, startHost, connectToHost, disconnect } =
+    useWebRTCSync();
   const [open, setOpen] = useState(false);
   const [hostId, setHostId] = useState(() => WebRTCSync.getLastHostId() ?? '');
   const [scanning, setScanning] = useState(false);
@@ -97,9 +98,7 @@ function SyncPanel() {
           {status === 'idle' && scanning && (
             <>
               <Typography variant="body2">Point your camera at the host's QR code:</Typography>
-              <Suspense
-                fallback={<CircularProgress size={32} sx={{ alignSelf: 'center' }} />}
-              >
+              <Suspense fallback={<CircularProgress size={32} sx={{ alignSelf: 'center' }} />}>
                 <QrScanner onScan={handleScan} />
               </Suspense>
               <Button onClick={() => setScanning(false)}>Cancel</Button>
@@ -144,7 +143,15 @@ function SyncPanel() {
                       <ListItem key={peer} disableGutters>
                         <ListItemText
                           primary={peer}
-                          slotProps={{ primary: { sx: { fontFamily: 'monospace', fontSize: '0.75rem', wordBreak: 'break-all' } } }}
+                          slotProps={{
+                            primary: {
+                              sx: {
+                                fontFamily: 'monospace',
+                                fontSize: '0.75rem',
+                                wordBreak: 'break-all',
+                              },
+                            },
+                          }}
                         />
                       </ListItem>
                     ))}

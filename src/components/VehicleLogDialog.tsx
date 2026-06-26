@@ -23,10 +23,7 @@ const TYPE_LABEL: Record<VehicleLogEntry['type'], string> = {
   edited: 'Edited',
 };
 
-const TYPE_COLOR: Record<
-  VehicleLogEntry['type'],
-  'success' | 'info' | 'warning'
-> = {
+const TYPE_COLOR: Record<VehicleLogEntry['type'], 'success' | 'info' | 'warning'> = {
   created: 'success',
   state_change: 'info',
   edited: 'warning',
