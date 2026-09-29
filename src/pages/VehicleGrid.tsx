@@ -135,6 +135,8 @@ function VehicleCard({
 
   function handleStateChange(newState: VehicleState) {
     const tsKey = STATE_TIMESTAMP_KEY[newState];
+    // Runs in an event handler, not during render.
+    // oxlint-disable-next-line react/purity
     const now = new Date().toISOString();
     const update: Partial<Vehicle> = { state: newState, updatedAt: now };
     if (tsKey) update[tsKey] = now as never;
