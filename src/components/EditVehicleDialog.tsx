@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Button,
   Dialog,
@@ -29,10 +29,13 @@ const toForm = (v: Vehicle) => ({
 function EditVehicleDialog({ vehicle, onClose }: Props) {
   const dispatch = useAppDispatch();
   const [form, setForm] = useState(vehicle ? toForm(vehicle) : null);
+  const [prevVehicle, setPrevVehicle] = useState(vehicle);
 
-  useEffect(() => {
+  // Reset the form when a different vehicle is passed in (adjusting state during render)
+  if (vehicle !== prevVehicle) {
+    setPrevVehicle(vehicle);
     if (vehicle) setForm(toForm(vehicle));
-  }, [vehicle]);
+  }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setForm((prev) => prev && { ...prev, [e.target.name]: e.target.value });
